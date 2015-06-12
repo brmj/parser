@@ -1,0 +1,28 @@
+<?xml version="1.0" ?>
+<xessplus>
+  <problem>
+    <classification_problem>
+      <filename>iris.csv</filename>
+      <classes>3</classes>
+      <inputs>4</inputs>
+      <outputs>1</outputs>
+      <split>.25</split>
+    </classification_problem>
+  </problem>
+  <algorithm>
+    <mlp_classifier>
+      <trainer>
+	<backprop_trainer>
+	  <momentum>0.1</momentum>
+	  <weightdecay>0.01</weightdecay>
+	  <epochs>50</epochs>
+	</backprop_trainer>
+      </trainer>
+      <input type="linear">
+	<hidden type="sigmoid" number="7">
+	  <output type="softmax"> </output>
+	</hidden>
+      </input>
+    </mlp_classifier>
+  </algorithm>
+</xessplus>

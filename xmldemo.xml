@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<bogus_example>
+  <problem>
+    <classification_problem>
+      <filename>bogus.dat</filename>
+      <classes>3</classes>
+    </classification_problem>
+  </problem>
+  <algorithm>
+    <rf_classifier>
+      <trees>50</trees>
+      <max_depth>5</max_depth>
+    </rf_classifier>
+  </algorithm>
+</bogus_example>
