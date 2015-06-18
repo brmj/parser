@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<xessplus>
+  <problem>
+    <classification_problem>
+      <filename>IrisTrain.csv</filename>
+      <classes>3</classes>
+      <inputs>4</inputs>
+      <outputs>1</outputs>
+      <split>.25</split>
+    </classification_problem>
+  </problem>
+  <algorithm>
+    <rf_classifier>
+      <trees>50</trees>
+      <max_depth>5</max_depth>
+    </rf_classifier>
+  </algorithm>
+</xessplus>

@@ -10,7 +10,7 @@ import xmlparse
 
 
 #still need to figure out the best way to do this.
-provides = {'feedforward_clasifier':{'backprop_trainer':{'momentum':{}, 'weight':{}, 'epochs':{}},
+provides = {'feedforward_classifier':{'backprop_trainer':{'momentum':{}, 'weight':{}, 'epochs':{}},
                                      'linear_layer':{}, 'sigmoid_layer':{}, 'softmax_layer':{},
                                      'full_connection':{}}}
 
@@ -25,30 +25,21 @@ def buildModel(xmlfile):
     #for the momment, just check this since I don't have time to add in the other options yet.
 
     assert(parser.is_classification())
-    assert(provides.hasKey(parser.algorithm.tag))
+    assert((parser.algorithm.tag) in list(provides.keys()))
     
     (inputs, outputs, classes) = parser.parse_classification()
+    assert(outputs == 1) #All we can handle for now, unfortunately.
     DS=ClassificationDataSet(inputs,outputs,nb_classes=classes)
 
 
     for line in file.readlines():
         data=[float(x) for x in line.strip().split(',') if x != '']
-        inp=tuple(data[:outputs])
-        output=tuple(data[outputs:])
+        inp=tuple(data[:inputs])
+        output=tuple(data[inputs:])
         DS.addSample(inp,output)
 
-    tstdata,trndata=DS.splitWithProportion(0.25)
-    trdata=ClassificationDataSet(trndata.indim,1,nb_classes=classes)
-    tsdata=ClassificationDataSet(tstdata.indim,1,nb_classes=classes)
 
-    for i in xrange(trndata.getLength()):
-        trdata.addSample(trndata.getSample(i)[0],trndata.getSample(i)[1])
-        
-    for i in xrange(tstdata.getLength()):
-        tsdata.addSample(tstdata.getSample(i)[0],tstdata.getSample(i)[1])
-
-    if(classes > 2):
-        DS._convertToOneOfMany()
+    DS._convertToOneOfMany()
 
     ((classifier_tag ,trainer_tuple, layers)) = parser.parse_algorithm()
 
@@ -74,12 +65,12 @@ def buildModel(xmlfile):
         for hiddenLayer in hiddenLayers:
             fnn.addModule(hiddenLayer)
 
-        if(layers[0][0] == "linear"):
-            outputLayer = LinearLayer(outputs)
-        elif(layers[0][0] == "sigmoid"):
-            outputLayer = SigmoidLayer(outputs)
-        elif(layers[0][0] == "softmax"):
-            outputLayer = SoftmaxLayer(outputs)
+        if(layers[len(layers) -1][0] == "linear"):
+            outputLayer = LinearLayer(classes)
+        elif(layers[len(layers) -1][0] == "sigmoid"):
+            outputLayer = SigmoidLayer(classes)
+        elif(layers[len(layers) -1][0] == "softmax"):
+            outputLayer = SoftmaxLayer(classes)
             fnn.addOutputModule(outputLayer)
         nnlayers = [inputLayer] + hiddenLayers + [outputLayer]
         for i in range (0, len(layers) - 1):

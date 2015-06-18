@@ -1,9 +1,9 @@
-import sklearn.ensamble
+import sklearn.ensemble
 import xmlparse
 
 
 #still need to figure out the best way to do this.
-provides = {'rf_classifier':{'trees':{}, 'depth':{}, 'maxleaf'={}}}
+provides = {'rf_classifier':{'trees':{}, 'depth':{}, 'maxleaf':{}}}
 
 
 def buildModel(xmlfile):
@@ -16,7 +16,7 @@ def buildModel(xmlfile):
     #for the momment, just check this since I don't have time to add in the other options yet.
 
     assert(parser.is_classification())
-    assert(provides.hasKey(parser.algorithm.tag))
+    assert(parser.algorithm.tag in provides)
     
     (inputs, outputs, classes) = parser.parse_classification()
 
@@ -26,7 +26,7 @@ def buildModel(xmlfile):
     for line in file.readlines():
         line=[float(x) for x in line.strip().split(',') if x != '']
         data.append(line[:inputs])
-        clss.(line[inputs:])
+        clss.append(line[inputs:])
 
 
     ((classifier_tag ,options)) = parser.parse_algorithm()

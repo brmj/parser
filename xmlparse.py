@@ -12,7 +12,7 @@ class Parser:
         self.root = self.tree.getroot()
         self.problem = self.root.find("problem")[0]
         self.algorithm = self.root.find("algorithm")[0]
-        self.datafile = self.problem.filename.text
+        self.datafile = self.problem.find("filename").text
         self.alg_parse_funcs = {'feedforward_classifier':self.parse_feedforward_classifier,
                                 'rf_classifier':self.parse_rf_classifier}
 
@@ -58,7 +58,7 @@ class Parser:
         trainer_tuple = (trainer.tag, trainer_options)
 
         layers = []
-        input = trainer.find("input")
+        input = classifier.find("input")
         connections = self.parse_connections(input)
         layers.append((input.get('type'), "I", connections))
         done = False
@@ -68,7 +68,7 @@ class Parser:
             if (len(hidden) > 0):
                 layer = hidden[0]
                 connections = self.parse_connections(layer)
-                layers.append((layer.get('type'), int(layer.get('number'), connections)))
+                layers.append((layer.get('type'), int(layer.get('number')), connections))
                 parent = layer
             else:
                 output = parent.find("output")
@@ -77,13 +77,13 @@ class Parser:
 
         return ((classifier.tag ,trainer_tuple, layers))
         
-    def parse_conections(self, layer):
+    def parse_connections(self, layer):
         connections = layer.findall("connection")
         conlist = []
         for connection in connections:
             offset = 1
             #code for reading the offset ought to go here. For now, assume next layer.
-            conlist.append((connecection.get('type'), offset))
+            conlist.append((connection.get('type'), offset))
 
         return conlist
     
@@ -93,12 +93,12 @@ class Parser:
         if (len(trs) == 0):
            options['trees'] = 30 #An arbitrary default.
         else:
-            options['trees'] = trs[0].text
-        dpth = algorithm.findall("max_depth")
+            options['trees'] = int(trs[0].text)
+        dpth = classifier.findall("max_depth")
         if (len(dpth) == 0):
-            options['depth'] = -1 #for unlimited.
+            options['depth'] = None #for unlimited.
         else:
-            options['depth'] = dpth[0].text
+            options['depth'] = int(dpth[0].text)
 
         return((classifier.tag, options))
 
